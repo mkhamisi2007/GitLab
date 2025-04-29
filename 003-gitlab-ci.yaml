@@ -1,0 +1,33 @@
+stages:
+  - build
+  - push
+  - deploy
+
+variables:
+  CI_REGISTRY: registry.sananetco.com
+  CI_REGISTRY_USER: "admin"
+  CI_REGISTRY_PASSWORD: "X8!wK%ZS?5V.ACB[zgq&yL"
+
+build:
+  stage: build
+  script:
+    - echo "$CI_REGISTRY_PASSWORD" | docker login $CI_REGISTRY -u $CI_REGISTRY_USER --password-stdin
+    - echo "Building Docker image..."
+    - docker build -t $CI_REGISTRY/$CI_PROJECT_PATH:$CI_COMMIT_SHORT_SHA .
+    - docker push $CI_REGISTRY/$CI_PROJECT_PATH:$CI_COMMIT_SHORT_SHA
+    
+  tags:
+    - docker
+
+
+deploy:
+  stage: deploy
+  image: docker.arvancloud.ir/dtzar/helm-kubectl:latest
+  script:
+    - echo "Deploying application to Kubernetes..."
+    - mkdir -p ~/.kube
+    - echo "$KUBE_CONFIG" > ~/.kube/config
+    - helm template  $CI_PROJECT_NAME ./myapp --namespace $CI_PROJECT_NAMESPACE  --set image.repository=$CI_REGISTRY/$CI_PROJECT_PATH,image.tag=$CI_COMMIT_SHORT_SHA
+    - helm upgrade --install  $CI_PROJECT_NAME ./myapp --namespace $CI_PROJECT_NAMESPACE --set image.repository=$CI_REGISTRY/$CI_PROJECT_PATH,image.tag=$CI_COMMIT_SHORT_SHA
+  tags:
+    - docker

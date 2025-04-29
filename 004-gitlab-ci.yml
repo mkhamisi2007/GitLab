@@ -1,0 +1,50 @@
+stages:
+  - build
+  - test
+  - deploy
+
+variables:
+  FRONTEND_IMAGE: my-frontend-image
+  BACKEND_IMAGE: my-backend-image
+  IMAGE_REGISTRY: registry.sananetco.com
+
+
+before_script:
+  - echo "starting ci/cd pipeline"
+
+build-frontend:
+  stage: build
+  script:
+    - echo "$CI_REGISTRY_PASSWORD" | docker login $IMAGE_REGISTRY -u $CI_REGISTRY_USER --password-stdin 
+    - docker build -t $IMAGE_REGISTRY/$CI_PROJECT_PATH/$FRONTEND_IMAGE:$CI_COMMIT_SHA ./frontend  --no-cache
+    - docker push $IMAGE_REGISTRY/$CI_PROJECT_PATH/$FRONTEND_IMAGE:$CI_COMMIT_SHA
+  tags:
+    - docker    
+
+build-backend:
+  stage: build
+  script:
+    - echo "$CI_REGISTRY_PASSWORD" | docker login $IMAGE_REGISTRY -u $CI_REGISTRY_USER --password-stdin
+    - docker build -t $IMAGE_REGISTRY/$CI_PROJECT_PATH/$BACKEND_IMAGE:$CI_COMMIT_SHA ./backend --no-cache
+    - docker push $IMAGE_REGISTRY/$CI_PROJECT_PATH/$BACKEND_IMAGE:$CI_COMMIT_SHA
+  tags:
+    - docker
+
+test:
+  stage: test
+  script:
+    - echo "Testing stage - add your tests here"
+  tags:
+    - docker
+
+deploy:
+  stage: deploy
+  image: docker.arvancloud.ir/dtzar/helm-kubectl:latest
+  script:
+    - mkdir -p ~/.kube
+    - echo "$KUBE_CONFIG" > ~/.kube/config
+    - cat ~/.kube/config
+    - echo "Deploying to Kubernetes"
+    - helm upgrade --install $CI_PROJECT_NAME ./deploy --namespace $CI_PROJECT_NAMESPACE --set frontend.image=$IMAGE_REGISTRY/$CI_PROJECT_PATH/$FRONTEND_IMAGE --set frontend.tag=$CI_COMMIT_SHA --set backend.image=$IMAGE_REGISTRY/$CI_PROJECT_PATH/$BACKEND_IMAGE --set backend.tag=$CI_COMMIT_SHA --kubeconfig ~/.kube/config
+  tags:
+    - docker
