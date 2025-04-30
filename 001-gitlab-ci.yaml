@@ -1,4 +1,4 @@
-# Define stages for the pipeline
+# Define stages for the pipeline 
 stages:
   - build
   - test
