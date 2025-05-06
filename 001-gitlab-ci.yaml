@@ -1,5 +1,5 @@
 # Define stages for the pipeline 
-stages:
+stages: 
   - build
   - test
   - deploy
