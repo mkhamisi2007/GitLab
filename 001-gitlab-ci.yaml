@@ -4,7 +4,7 @@ stages:
   - test
   - deploy 
 
-# Define jobs for each stage
+# Define jobs for each stage 
 build:
   stage: build
   script:
