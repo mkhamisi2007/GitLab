@@ -25,7 +25,7 @@ data = {
 response = requests.post(
     f"{GITLAB_API}/projects/{PROJECT_ID}/repository/files/{FILE_PATH}",
     headers=headers,
-    json=data
+    json=data 
 )
 
 # Check the response
