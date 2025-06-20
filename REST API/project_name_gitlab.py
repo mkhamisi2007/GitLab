@@ -1,6 +1,6 @@
 import requests
 
-# Set your GitLab Personal Access Token and the GitLab API endpoint
+# Set your GitLab Personal Access Token and the GitLab API endpoint 
 GITLAB_TOKEN = 'your_personal_access_token'
 GITLAB_API = 'https://gitlab.sananetco.com'
 
