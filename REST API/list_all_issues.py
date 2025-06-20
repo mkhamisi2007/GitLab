@@ -9,7 +9,7 @@ PROJECT_ID = 'your_project_id'
 
 def get_all_issues(project_id):
     headers = {
-        'Private-Token': ACCESS_TOKEN
+        'Private-Token': ACCESS_TOKEN 
     }
     
     issues = []
