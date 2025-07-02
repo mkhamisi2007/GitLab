@@ -32,3 +32,8 @@ deploy:
     - helm upgrade --install  $CI_PROJECT_NAME ./myapp --namespace $CI_PROJECT_NAMESPACE --set image.repository=$CI_REGISTRY/$CI_PROJECT_PATH,image.tag=$CI_COMMIT_SHORT_SHA
   tags:
     - docker
+
+ deploy_kubernet:
+
+   tags:
+    - docker
