@@ -36,4 +36,4 @@ deploy:
  deploy_kubernet:
 
    tags:
-    - docker
+    - kubernetes
