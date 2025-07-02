@@ -2,6 +2,7 @@ stages:
   - build
   - push 
   - deploy
+  - deploy_kubernet
 
 variables:
   CI_REGISTRY: registry.sananetco.com
